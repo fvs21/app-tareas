@@ -1,0 +1,14 @@
+CREATE TABLE tareas (
+    id_tarea INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(253) NOT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modificado_en TIMESTAMP DEFAULT NULL
+);
+
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    password VARCHAR(150) NOT NULL,
+    UNIQUE(email)
+);
