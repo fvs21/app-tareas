@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
 from flask_bcrypt import Bcrypt
+import datetime
 
 from config.db import get_db_connection
 
@@ -46,3 +47,57 @@ def registrar():
         return jsonify({"error": f"Error al registrar al usuario {str(e)}"}), 500
     finally:
         cursor.close()
+
+@usuarios_bp.route("/login", methods=['POST'])
+def login():
+    data = request.get_json()
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"error": "faltan datos"}), 400
+    
+    cursor = get_db_connection()
+
+    cursor.execute("SELECT password FROM usuarios WHERE email = %s", (email, ))
+
+    usuario = cursor.fetchone()
+
+    if usuario and bcrypt.check_password_hash(usuario[0], password):
+        expires = datetime.timedelta(minutes=60)
+
+        access_token = create_access_token(
+            identity=(usuario[1]),
+            expires_delta=expires
+        )
+
+        cursor.close()
+
+        return jsonify({"token": access_token}), 200
+    
+    return jsonify({"error": "Credenciales incorrectas"}), 401
+
+@usuarios_bp.route('/datos', methods=['GET'])
+@jwt_required()
+def datos():
+    user = get_jwt_identity()
+    cursor = get_db_connection()
+
+    query = "SELECT id_usuario, nombre, email FROM USUARIOS where id_usuarios = %s"
+
+    cursor.execute(query, (user, ))
+    user = cursor.fetchone()
+
+    cursor.close()
+
+    if user:
+        user_info = {
+            "id_usuario": user[0],
+            "nombre": user[1],
+            "email": user[2] 
+        }
+
+        return jsonify({"datos": user_info}), 200
+    
+    return jsonify({"error": "usuario no encontrado"}), 404

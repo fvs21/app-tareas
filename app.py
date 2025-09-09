@@ -2,6 +2,7 @@ from flask import Flask
 import os
 from dotenv import load_dotenv
 from config.db import init_db, mysql
+from flask_jwt_extended import JWTManager
 
 from routes.tareas import tareas_bp
 from routes.usuarios import usuarios_bp
@@ -14,6 +15,9 @@ def create_app():
     init_db(app)
     app.register_blueprint(tareas_bp, url_prefix="/tareas")
     app.register_blueprint(usuarios_bp, url_prefix="/usuarios")
+
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+    jwt = JWTManager(app)
 
     return app
 
