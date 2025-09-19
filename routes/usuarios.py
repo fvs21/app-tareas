@@ -60,7 +60,7 @@ def login():
     
     cursor = get_db_connection()
 
-    cursor.execute("SELECT password FROM usuarios WHERE email = %s", (email, ))
+    cursor.execute("SELECT password FROM usuarios WHERE email = %s", (email,))
 
     usuario = cursor.fetchone()
 
@@ -68,7 +68,7 @@ def login():
         expires = datetime.timedelta(minutes=60)
 
         access_token = create_access_token(
-            identity=(usuario[1]),
+            identity=str(usuario[1]),
             expires_delta=expires
         )
 
@@ -86,7 +86,7 @@ def datos():
 
     query = "SELECT id_usuario, nombre, email FROM USUARIOS where id_usuarios = %s"
 
-    cursor.execute(query, (user, ))
+    cursor.execute(query, (user,))
     user = cursor.fetchone()
 
     cursor.close()
