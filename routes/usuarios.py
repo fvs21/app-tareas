@@ -40,7 +40,7 @@ def registrar():
         cursor.execute('''INSERT INTO usuarios (nombre, email, password) values (%s, %s, %s)''', 
                        (nombre, email, pwd_hash))
         
-        cursor.connection.commit
+        cursor.connection.commit()
 
         return jsonify({"mesaje": "Usuario creado"}), 201
     except Exception as e:
