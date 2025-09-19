@@ -84,7 +84,7 @@ def datos():
     user = get_jwt_identity()
     cursor = get_db_connection()
 
-    query = "SELECT id_usuario, nombre, email FROM usuarios where id_usuarios = %s"
+    query = "SELECT id_usuario, nombre, email FROM usuarios where id_usuario = %s"
 
     cursor.execute(query, (user,))
     user = cursor.fetchone()
