@@ -65,7 +65,7 @@ def modificar(id_tarea):
     if not tarea:
         cursor.close()
         return jsonify({"error": "La tarea no existe"}), 404
-    if not tarea[1] == int(user):
+    if not tarea[2] == int(user):
         cursor.close()
         return jsonify({"error": "Credenciales invalidas"}), 401
     
@@ -76,4 +76,5 @@ def modificar(id_tarea):
     except Exception as e:
         return jsonify({"error": f"No se puede modificar la tarea: {str(e)}"}), 500
     finally:
+
         cursor.close()
